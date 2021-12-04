@@ -38,5 +38,11 @@ namespace WebApplication1.Controllers
 
             return filesInfo;
         }
+        
+        [HttpGet]
+        public string Get()
+        {
+            return "It`s work!";
+        }
     }
 }
