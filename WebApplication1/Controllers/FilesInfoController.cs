@@ -19,7 +19,11 @@ namespace WebApplication1.Controllers
         public FilesInfo Post([FromBody] DirInfo di)
         {
             if (di == null) return null;
-            string[] files = Directory.GetFiles(di.Path);
+            string[] files;
+            if (di.Extension == "")
+                files = Directory.GetFiles(di.Path);
+            else
+                files = Directory.GetFiles(di.Path, di.Extension);
 
             FileInformation[] filesInformation = new FileInformation[files.Length];
             DirectoryInfo d = new DirectoryInfo(di.Path);
