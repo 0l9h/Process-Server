@@ -12,16 +12,25 @@ using Microsoft.AspNetCore.Http;
 
 namespace WebApplication1.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class FilesInfoController : ControllerBase
     {
+        private static List<Cache> cache = new List<Cache>();
         // POST api/FilesInfo
         [HttpPost]
         public IActionResult Post([FromBody] DirInfo di)
         {
             if (di == null) return null;
             string[] files;
+
+            cache.RemoveAll(data => DateTime.Now - data.SearchDate > TimeSpan.FromSeconds(5));
+
+            Cache data = cache.Where(data => data.DirInfo.Extension == di.Extension && data.DirInfo.Path == di.Path).FirstOrDefault();
+            if (data != null)
+                return Ok(data.FileInformation);
+
             if (di.Extension == "")
                 files = Directory.GetFiles(di.Path);
             else
@@ -39,14 +48,14 @@ namespace WebApplication1.Controllers
                 file.CreationDate = fis[i].CreationTime;
                 filesInformation[i] = file;
             }
-            CookieOptions options = new CookieOptions();
-            options.Expires = DateTime.Now.AddDays(7);
+            //CookieOptions options = new CookieOptions();
+            //options.Expires = DateTime.Now.AddDays(7);
 
-            HttpContext.Response.Cookies.Append("reqPath", di.Path, options);
-            HttpContext.Response.Cookies.Append("reqExtension", di.Extension, options);
-
+            //HttpContext.Response.Cookies.Append("reqPath", di.Path, options);
+            //HttpContext.Response.Cookies.Append("reqExtension", di.Extension, options);
 
             FilesInfo filesInfo = new FilesInfo(filesInformation);
+            cache.Add(new Cache() { FileInformation = filesInfo, DirInfo = di, SearchDate = DateTime.Now });
 
             return Ok(filesInfo);
         }
