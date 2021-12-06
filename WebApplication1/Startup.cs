@@ -29,7 +29,10 @@ namespace WebApplication1
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
-
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

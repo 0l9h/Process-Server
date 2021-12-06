@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.Models;
 using System.IO;
+using Microsoft.AspNetCore.Http;
+
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,7 +18,7 @@ namespace WebApplication1.Controllers
     {
         // POST api/FilesInfo
         [HttpPost]
-        public FilesInfo Post([FromBody] DirInfo di)
+        public IActionResult Post([FromBody] DirInfo di)
         {
             if (di == null) return null;
             string[] files;
@@ -37,16 +39,22 @@ namespace WebApplication1.Controllers
                 file.CreationDate = fis[i].CreationTime;
                 filesInformation[i] = file;
             }
+            CookieOptions options = new CookieOptions();
+            options.Expires = DateTime.Now.AddDays(7);
+
+            HttpContext.Response.Cookies.Append("reqPath", di.Path, options);
+            HttpContext.Response.Cookies.Append("reqExtension", di.Extension, options);
+
 
             FilesInfo filesInfo = new FilesInfo(filesInformation);
 
-            return filesInfo;
+            return Ok(filesInfo);
         }
         
         [HttpGet]
         public string Get()
         {
-            return "It`s work!";
+            return "Get method";
         }
     }
 }
