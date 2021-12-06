@@ -27,7 +27,7 @@ namespace WebApplication1.Controllers
 
             FileInformation[] filesInformation = new FileInformation[files.Length];
             DirectoryInfo d = new DirectoryInfo(di.Path);
-            FileInfo[] fis = d.GetFiles();
+            FileInfo[] fis = d.GetFiles(di.Extension);
 
             for(int i = 0; i < files.Length; i++)
             {
